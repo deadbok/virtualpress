@@ -21,6 +21,7 @@ Together with the prerequisites listed above, the scripts contained herein will 
 
 * Is configured with a static IP address on your local LAN (default 192.168.50.50) so you don't need to constantly be looking up new DHCP-assigned addresses each time it restarts
 * Has a complete MySQL 5 setup (client and server) installed
+* Has phpmyadmin installed
 * Has a complete Apache 2 setup installed (with mod_rewrite)
 * Has a complete PHP7 setup (both PHP-FPM and CLI versions) installed, with the following modules:
     * php7.0

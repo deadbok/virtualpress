@@ -1,0 +1,33 @@
+---
+- name: Install phpmyadmin
+  apt:
+    name: "{{ item }}"
+    state: latest
+  with_items:
+    - phpmyadmin
+  notify: restart apache
+
+- name: Ensure phpMyAdmin config file is included in Apache config.
+  lineinfile:
+    dest: /etc/apache2/apache2.conf
+    state: present
+    regexp: "^Include.+phpmyadmin.+$"
+    line: "Include /etc/phpmyadmin/apache.conf"
+    insertafter: "EOF"
+  notify: restart apache
+
+- name: Add default username and password for MySQL connection.
+  lineinfile: >
+    dest={{ phpmyadmin_config_file }}
+    state=present
+    regexp="^.+\['{{ item.key }}'\].+$"
+    line="$cfg['Servers'][$i]['{{ item.key }}'] = '{{ item.value }}';"
+    insertbefore="^\?>"
+  with_items:
+    - { key: host, value: "{{ phpmyadmin_mysql_host }}" }
+    - { key: port, value: "{{ phpmyadmin_mysql_port }}" }
+    - { key: socket, value: "{{ phpmyadmin_mysql_socket }}" }
+    - { key: connect_type, value: "{{ phpmyadmin_mysql_connect_type }}" }
+    - { key: user, value: "{{ phpmyadmin_mysql_user }}" }
+    - { key: password, value: "{{ mysql_root_password.stdout }}" }
+  notify: restart apache
